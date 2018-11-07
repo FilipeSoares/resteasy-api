@@ -1,4 +1,4 @@
-package br.com.fo2app.investment.resources;
+package br.com.app.restful.resources;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import br.com.fo2app.investment.model.Client;
+import br.com.app.restful.model.Client;
 
 @Path("/clients")
 public class ClientsResource {

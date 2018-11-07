@@ -1,4 +1,4 @@
-package br.com.fo2app.investment;
+package br.com.app.restful;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -6,7 +6,7 @@ import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
-import br.com.fo2app.investment.resources.ClientsResource;
+import br.com.app.restful.resources.ClientsResource;
 
 @ApplicationPath("/")
 public class ApplicationService extends Application {

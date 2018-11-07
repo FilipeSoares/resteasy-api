@@ -1,4 +1,4 @@
-package br.com.fo2app.investment.model;
+package br.com.app.restful.model;
 
 import java.io.Serializable;
 

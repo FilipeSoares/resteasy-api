@@ -3,6 +3,6 @@
   <display-name>Investment API</display-name>
   <context-param>
     <param-name>resteasy.servlet.mapping.prefix</param-name>
-    <param-value>/investment-api</param-value>
+    <param-value>/restful-api</param-value>
   </context-param>
 </web-app>
