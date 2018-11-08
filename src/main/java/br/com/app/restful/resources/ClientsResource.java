@@ -15,13 +15,6 @@ import br.com.app.restful.model.Client;
 public class ClientsResource {
 
 	@GET
-	@Path("/info")
-	@Produces(MediaType.TEXT_PLAIN)
-	public String info() {
-		return "Clients Resource version 1.0";
-	}
-	
-	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response get() {
@@ -31,8 +24,8 @@ public class ClientsResource {
 	private List<Client> list() {
 		List<Client> list = new ArrayList<Client>();
 		
-		list.add(new Client("1", "Oswaldo"));
-		list.add(new Client("2", "Mel"));
+		list.add(new Client("1", "Client 1"));
+		list.add(new Client("2", "Client 2"));
 		
 		return list;
 	}

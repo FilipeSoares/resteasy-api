@@ -2,23 +2,23 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>br.com.smartapp</groupId>
-	<artifactId>resteasy-api</artifactId>
+	<groupId>br.com.app</groupId>
+	<artifactId>restful-api</artifactId>
 	<version>1.0.0</version>
 	<packaging>war</packaging>
 	<name>${artifactId}</name>
-	<description>API of Investments</description>
+	<description>Restful API Sample</description>
 
 	<properties>
 		<resteasy.version>3.0.24.Final</resteasy.version>
 	</properties>
 
 	<dependencies>
-	<dependency>
-        <groupId>org.jboss.resteasy</groupId>
-        <artifactId>resteasy-servlet-initializer</artifactId>
-        <version>${resteasy.version}</version>
-    </dependency>
+		<dependency>
+	        <groupId>org.jboss.resteasy</groupId>
+	        <artifactId>resteasy-servlet-initializer</artifactId>
+	        <version>${resteasy.version}</version>
+	    </dependency>
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-client</artifactId>

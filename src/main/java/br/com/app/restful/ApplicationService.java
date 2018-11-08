@@ -7,19 +7,9 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 import br.com.app.restful.resources.ClientsResource;
+import br.com.app.restful.resources.InfoResource;
 
-@ApplicationPath("/")
+@ApplicationPath("/v1")
 public class ApplicationService extends Application {
-	
-	private Set<Object> singletons = new HashSet<Object>();
-	 
-    public ApplicationService() {
-        singletons.add(new ClientsResource());
-    }
- 
-    @Override
-    public Set<Object> getSingletons() {
-        return singletons;
-    }
 	
 }
