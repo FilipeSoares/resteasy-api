@@ -2,34 +2,46 @@ package br.com.app.restful.model;
 
 import java.io.Serializable;
 
-public class Client implements Serializable {
+public class Cliente implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	private String id;
-	private String name;
+	private Long id;
+	private String email;
+	private String nome;
 	
-	public Client() {
-		
+	public Cliente() {
 	}
-	
-	public Client(String id, String name) {
+
+	public Cliente(Long id, String email, String nome) {
 		super();
 		this.id = id;
-		this.name = name;
+		this.email = email;
+		this.nome = nome;
 	}
-	
-	public String getId() {
+
+	public Long getId() {
 		return id;
 	}
-	public void setId(String id) {
+
+	public void setId(Long id) {
 		this.id = id;
 	}
-	public String getName() {
-		return name;
+
+	public String getEmail() {
+		return email;
 	}
-	public void setName(String name) {
-		this.name = name;
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
 	@Override
@@ -48,7 +60,7 @@ public class Client implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Client other = (Client) obj;
+		Cliente other = (Cliente) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -56,5 +68,5 @@ public class Client implements Serializable {
 			return false;
 		return true;
 	}
-
+	
 }

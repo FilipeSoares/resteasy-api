@@ -13,7 +13,7 @@ public class InfoResource {
 	@Path("/info")
 	@Produces(MediaType.TEXT_PLAIN)
 	public String info() {
-		return "Clients Resource version 1.0";
+		return "Restful API versão 1.0.0";
 	}
 	
 }
