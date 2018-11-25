@@ -3,6 +3,7 @@ package br.com.app.restful.resources;
 import java.net.URI;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -38,6 +39,7 @@ public class ClienteResource {
 	
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
 	public Response create(Cliente cliente) {
 		URI location = UriBuilder.fromResource(ClienteResource.class).path(dao.salvar(cliente).getId().toString()).build();
 		return Response.created(location).build();
@@ -46,6 +48,7 @@ public class ClienteResource {
 	@PUT
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
 	public Response update(@PathParam("id") Long id, Cliente cliente) {
 		URI location = UriBuilder.fromResource(ClienteResource.class).path(id.toString()).build();
 		cliente.setId(id);
