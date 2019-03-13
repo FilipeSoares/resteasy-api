@@ -11,7 +11,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table
-public class Cliente implements Serializable {
+public class Client implements Serializable {
 
 	private static final long serialVersionUID = 2265052691489258718L;
 
@@ -23,16 +23,16 @@ public class Cliente implements Serializable {
 	private String email;
 	
 	@Column
-	private String nome;
+	private String name;
 	
-	public Cliente() {
+	public Client() {
 	}
 
-	public Cliente(Long id, String email, String nome) {
+	public Client(Long id, String email, String name) {
 		super();
 		this.id = id;
 		this.email = email;
-		this.nome = nome;
+		this.name = name;
 	}
 
 	public Long getId() {
@@ -51,12 +51,12 @@ public class Cliente implements Serializable {
 		this.email = email;
 	}
 
-	public String getNome() {
-		return nome;
+	public String getName() {
+		return name;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Override
@@ -75,7 +75,7 @@ public class Cliente implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Cliente other = (Cliente) obj;
+		Client other = (Client) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

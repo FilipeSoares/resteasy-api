@@ -15,14 +15,14 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
-import br.com.app.restful.dao.ClienteDAO;
-import br.com.app.restful.model.Cliente;
+import br.com.app.restful.dao.ClientDAO;
+import br.com.app.restful.model.Client;
 
-@Path("/clientes")
-public class ClienteResource {
+@Path("/clients")
+public class ClientResource {
 	
 	@Inject
-	ClienteDAO dao;
+	ClientDAO dao;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -40,8 +40,8 @@ public class ClienteResource {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response create(Cliente cliente) {
-		URI location = UriBuilder.fromResource(ClienteResource.class).path(dao.salvar(cliente).getId().toString()).build();
+	public Response create(Client client) {
+		URI location = UriBuilder.fromResource(ClientResource.class).path(dao.salvar(client).getId().toString()).build();
 		return Response.created(location).build();
 	}
 	
@@ -49,10 +49,10 @@ public class ClienteResource {
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response update(@PathParam("id") Long id, Cliente cliente) {
-		URI location = UriBuilder.fromResource(ClienteResource.class).path(id.toString()).build();
-		cliente.setId(id);
-		return Response.ok(dao.salvar(cliente)).header("Location", location).build();
+	public Response update(@PathParam("id") Long id, Client client) {
+		URI location = UriBuilder.fromResource(ClientResource.class).path(id.toString()).build();
+		client.setId(id);
+		return Response.ok(dao.salvar(client)).header("Location", location).build();
 	}
 	
 	@DELETE
