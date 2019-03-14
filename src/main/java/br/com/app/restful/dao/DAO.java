@@ -2,14 +2,18 @@ package br.com.app.restful.dao;
 
 import java.util.List;
 
-public interface DAO<T> {
+import br.com.app.restful.model.ModelEntity;
+
+public interface DAO<T extends ModelEntity> {
 	
-	public List<T> listar();
+	List<T> list();
 	
-	public T buscar(Long id);
+	T find(Long id);
 	
-	public T salvar(T entity);
+	Long create(T entity);
 	
-	public void remover(Long id);
+	void update(T entity);
+	
+	void remove(Long id);
 	
 }

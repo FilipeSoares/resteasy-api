@@ -13,7 +13,7 @@ public class InfoResource {
 	@Path("/info")
 	@Produces(MediaType.TEXT_PLAIN)
 	public String info() {
-		return "Restful API vers„o 1.0.0";
+		return "Restful API vers√£o 1.0.0";
 	}
 	
 }

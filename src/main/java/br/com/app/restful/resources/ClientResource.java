@@ -27,21 +27,21 @@ public class ClientResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response list() {
-		return Response.ok(dao.listar()).build();
+		return Response.ok(dao.list()).build();
 	}
 	
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response fetch(@PathParam("id") Long id) {
-		return Response.ok(dao.buscar(id)).build();
+		return Response.ok(dao.find(id)).build();
 	}
 	
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response create(Client client) {
-		URI location = UriBuilder.fromResource(ClientResource.class).path(dao.salvar(client).getId().toString()).build();
+		URI location = UriBuilder.fromResource(ClientResource.class).path(dao.create(client).toString()).build();
 		return Response.created(location).build();
 	}
 	
@@ -52,14 +52,15 @@ public class ClientResource {
 	public Response update(@PathParam("id") Long id, Client client) {
 		URI location = UriBuilder.fromResource(ClientResource.class).path(id.toString()).build();
 		client.setId(id);
-		return Response.ok(dao.salvar(client)).header("Location", location).build();
+		dao.update(client);
+		return Response.ok().header("Location", location).build();
 	}
 	
 	@DELETE
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response remover(@PathParam("id") Long id) {
-		dao.remover(id);
+		dao.remove(id);
 		return Response.noContent().build();
 	}
 	
