@@ -1,4 +1,4 @@
-package br.com.app.dao;
+package br.com.app.restful.dao;
 
 import java.io.File;
 import java.util.ArrayList;
