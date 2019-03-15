@@ -63,7 +63,7 @@ public abstract class AbstractDAO<T extends ModelEntity> implements DAO<T> {
 		return em.createQuery("select o from " + clazz.getSimpleName() + " o").getResultList();
 	}
 	
-	protected List<T> listWithCriteria(final List<?> fields, final List<Predicate> restrictions) {
+	public List<T> listWithCriteria(final List<?> fields, final List<Predicate> restrictions) {
 		
 		if ( !fields.isEmpty() ) {
 			
@@ -86,32 +86,12 @@ public abstract class AbstractDAO<T extends ModelEntity> implements DAO<T> {
 		
 		return typedQuery.getResultList();
 	}
-	
-	protected List<T> listWithCriteria(final List<?> fields) {
-		
-		if ( !fields.isEmpty() ) {
-			
-			List<Expression<?>> fieldsList = new ArrayList<Expression<?>>();
-			
-			fields.forEach(f -> fieldsList.add(root.get(f.toString())));
-			
-			final List<Selection<?>> selectionList = new ArrayList<>();
-			selectionList.addAll(fieldsList);
-			
-			query.multiselect(selectionList);
-			
-		}
-        
-        TypedQuery<T> typedQuery = em.createQuery(query);
-		
-		return typedQuery.getResultList();
-	}
 
 	public T find(Long id) {
 		return em.find(clazz, id);
 	}
 	
-	protected T findWithCriteria(final Long id, final List<?> fields) {
+	public T findWithCriteria(final Long id, final List<?> fields) {
 		
 		CriteriaBuilder builder = em.getCriteriaBuilder();
 		builder = em.getCriteriaBuilder();
@@ -136,23 +116,6 @@ public abstract class AbstractDAO<T extends ModelEntity> implements DAO<T> {
         TypedQuery<T> typedQuery = em.createQuery(query);
 		
 		return typedQuery.getSingleResult();
-	}
-	
-	@SuppressWarnings("unchecked")
-	protected T findWithGraph(Long id, String namedGraph) {
-		
-		EntityGraph<T> eg = (EntityGraph<T>) em.getEntityGraph(namedGraph);    	
-    	
-    	Map<String, Object> properties = new HashMap<>();
-    	properties.put("javax.persistence.fetchgraph", eg);
-    	
-    	T entity = em.find(clazz, id, properties);
-    	
-    	if (entity==null) {
-    		throw new NoResultException();
-    	}
-    	
-		return entity;
 	}
 
 	@Transactional
