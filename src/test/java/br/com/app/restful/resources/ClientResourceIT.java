@@ -27,6 +27,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.ScopeType;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -46,6 +47,8 @@ public class ClientResourceIT {
 	private URL url;
 	private RequestSpecification requestSpecification;
 	
+	private static final String RESOURCE = "clients";
+	
 	private static final String NAME = "Test Client";
 	private static final String EMAIL = "client@test.com";
 	
@@ -56,9 +59,13 @@ public class ClientResourceIT {
 				.importDependencies(ScopeType.COMPILE, ScopeType.TEST, ScopeType.PROVIDED, ScopeType.RUNTIME).resolve()
 				.withTransitivity().asFile();
 
-		WebArchive war = ShrinkWrap.create(WebArchive.class, "restful-api.war").addPackages(true, "br.com.app.restful")
-				.addAsResource("META-INF/persistence.xml").addAsLibraries(archives).addAsWebInfResource(
-						new StringAsset("<beans bean-discovery-mode=\"all\" version=\"1.1\"/>"), "beans.xml");
+		WebArchive war = ShrinkWrap
+							.create(WebArchive.class, "restful-api.war")
+							.addPackages(true, "br.com.app.restful")
+							.addAsResource("META-INF/persistence.xml")
+							.addAsLibraries(archives)
+							.addAsWebInfResource("jboss-web.xml")
+							.addAsWebInfResource(new StringAsset("<beans bean-discovery-mode=\"all\" version=\"1.1\"/>"), "beans.xml");
 
 		return war;
 	}
@@ -68,7 +75,7 @@ public class ClientResourceIT {
 		
 		final RequestSpecBuilder request = new RequestSpecBuilder();
         request.setBaseUri(url.toURI())
-        		.setBasePath("clients")
+        		.setBasePath(RESOURCE)
         		.setAccept(MediaType.APPLICATION_JSON);
         
         this.requestSpecification = request.build();
@@ -82,10 +89,11 @@ public class ClientResourceIT {
 		given(requestSpecification)
 				.contentType(ContentType.JSON)
 				.body(loadBody())
-				.when().log().all().post()
+				.when().post()
 				.then()
 					.assertThat()
-					.header("Location", notNullValue()).statusCode(is(Response.Status.CREATED.getStatusCode()));
+					.header("Location", notNullValue())
+					.statusCode(is(Response.Status.CREATED.getStatusCode()));
 		
 	}
 	
@@ -103,10 +111,8 @@ public class ClientResourceIT {
 					.header("Location", notNullValue()).statusCode(is(Response.Status.CREATED.getStatusCode()))
 				.extract().header("Location");
 		
-		String id = location.split("users/")[1];
-		
 		given(requestSpecification)
-			.pathParam("id", id)
+			.pathParam("id", extractIdentity(location))
 			.contentType(ContentType.JSON)
 			.body(new GsonBuilder().create().toJson(new Client(EMAIL, NAME + System.currentTimeMillis())))
 			.when().put("/{id}")
@@ -142,10 +148,8 @@ public class ClientResourceIT {
 					.header("Location", notNullValue()).statusCode(is(Response.Status.CREATED.getStatusCode()))
 				.extract().header("Location");
 		
-		String id = location.split("users/")[1];
-		
 		given(requestSpecification)
-			.pathParam("id", id)
+			.pathParam("id", extractIdentity(location))
 			.contentType(ContentType.JSON)
 			.when().get("/{id}")
 			.then()
@@ -168,10 +172,8 @@ public class ClientResourceIT {
 					.header("Location", notNullValue()).statusCode(is(Response.Status.CREATED.getStatusCode()))
 				.extract().header("Location");
 		
-		String id = location.split("users/")[1];
-		
 		given(requestSpecification)
-			.pathParam("id", id)
+			.pathParam("id", extractIdentity(location))
 			.when().delete("/{id}")
 			.then()
 				.assertThat().statusCode(is(Response.Status.NO_CONTENT.getStatusCode()));
@@ -196,13 +198,14 @@ public class ClientResourceIT {
 	}
 	
 	@Test
+	@Ignore
 	@RunAsClient
 	@InSequence(7)
 	public void conflict() throws URISyntaxException {
 		
 		String body = loadBody();
 		
-		// Create User
+		// Create Client
 		
 		given(requestSpecification)
 				.contentType(ContentType.JSON)
@@ -212,7 +215,7 @@ public class ClientResourceIT {
 					.assertThat()
 					.header("Location", notNullValue()).statusCode(is(Response.Status.CREATED.getStatusCode()));
 		
-		// Create Duplicate User
+		// Create Duplicate Client
 		
 		given(requestSpecification)
 			.contentType(ContentType.JSON)
@@ -229,9 +232,13 @@ public class ClientResourceIT {
         
         Client client = new Client();
         client.setEmail(EMAIL);
-        client.setName(NAME + now);
+        client.setName(NAME + " " + now);
 		
 		return new GsonBuilder().create().toJson(client);
+	}
+	
+	private static String extractIdentity(String location){
+		return location.split(RESOURCE+"/")[1];
 	}
 
 }
