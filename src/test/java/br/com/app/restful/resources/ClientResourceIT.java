@@ -12,8 +12,6 @@ import java.net.URL;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.google.gson.GsonBuilder;
-
 import org.arquillian.container.chameleon.api.ChameleonTarget;
 import org.arquillian.container.chameleon.api.Property;
 import org.arquillian.container.chameleon.runner.ArquillianChameleon;
@@ -27,9 +25,10 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.ScopeType;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import com.google.gson.GsonBuilder;
 
 import br.com.app.restful.model.Client;
 import io.restassured.builder.RequestSpecBuilder;
@@ -50,7 +49,10 @@ public class ClientResourceIT {
 	private static final String RESOURCE = "clients";
 	
 	private static final String NAME = "Test Client";
-	private static final String EMAIL = "client@test.com";
+	private static final String EMAIL = "@test.com";
+	private static final String LOCATION_HEADER = "Location";
+	
+	private static final boolean printLog = false;
 	
 	@Deployment
 	public static WebArchive deploy() {
@@ -76,7 +78,8 @@ public class ClientResourceIT {
 		final RequestSpecBuilder request = new RequestSpecBuilder();
         request.setBaseUri(url.toURI())
         		.setBasePath(RESOURCE)
-        		.setAccept(MediaType.APPLICATION_JSON);
+        		.setAccept(MediaType.APPLICATION_JSON)
+        		.setContentType(ContentType.JSON);
         
         this.requestSpecification = request.build();
 		
@@ -87,12 +90,11 @@ public class ClientResourceIT {
 	@InSequence(1)
 	public void create() {
 		given(requestSpecification)
-				.contentType(ContentType.JSON)
 				.body(loadBody())
 				.when().post()
 				.then()
 					.assertThat()
-					.header("Location", notNullValue())
+					.header(LOCATION_HEADER, notNullValue())
 					.statusCode(is(Response.Status.CREATED.getStatusCode()));
 		
 	}
@@ -103,17 +105,15 @@ public class ClientResourceIT {
 	public void update() {
 		
 		String location = given(requestSpecification)
-				.contentType(ContentType.JSON)
 				.body(loadBody())
 				.when().post()
 				.then()
 					.assertThat()
-					.header("Location", notNullValue()).statusCode(is(Response.Status.CREATED.getStatusCode()))
-				.extract().header("Location");
+					.header(LOCATION_HEADER, notNullValue()).statusCode(is(Response.Status.CREATED.getStatusCode()))
+				.extract().header(LOCATION_HEADER);
 		
 		given(requestSpecification)
 			.pathParam("id", extractIdentity(location))
-			.contentType(ContentType.JSON)
 			.body(new GsonBuilder().create().toJson(new Client(EMAIL, NAME + System.currentTimeMillis())))
 			.when().put("/{id}")
 			.then()
@@ -140,17 +140,15 @@ public class ClientResourceIT {
 	public void get() {
 		
 		String location = given(requestSpecification)
-				.contentType(ContentType.JSON)
 				.body(loadBody())
 				.when().post()
 				.then()
 					.assertThat()
-					.header("Location", notNullValue()).statusCode(is(Response.Status.CREATED.getStatusCode()))
-				.extract().header("Location");
+					.header(LOCATION_HEADER, notNullValue()).statusCode(is(Response.Status.CREATED.getStatusCode()))
+				.extract().header(LOCATION_HEADER);
 		
 		given(requestSpecification)
 			.pathParam("id", extractIdentity(location))
-			.contentType(ContentType.JSON)
 			.when().get("/{id}")
 			.then()
 				.assertThat().statusCode(is(Response.Status.OK.getStatusCode()))
@@ -164,13 +162,12 @@ public class ClientResourceIT {
 	public void remove() {
 		
 		String location = given(requestSpecification)
-				.contentType(ContentType.JSON)
 				.body(loadBody())
 				.when().post()
 				.then()
 					.assertThat()
-					.header("Location", notNullValue()).statusCode(is(Response.Status.CREATED.getStatusCode()))
-				.extract().header("Location");
+					.header(LOCATION_HEADER, notNullValue()).statusCode(is(Response.Status.CREATED.getStatusCode()))
+				.extract().header(LOCATION_HEADER);
 		
 		given(requestSpecification)
 			.pathParam("id", extractIdentity(location))
@@ -185,44 +182,58 @@ public class ClientResourceIT {
 	@InSequence(6)
 	public void notFound() {
 		
-		String id = String.valueOf(System.currentTimeMillis());
-		
 		given(requestSpecification)
-			.pathParam("id", id)
-			.contentType(ContentType.JSON)
+			.pathParam("id", String.valueOf(System.currentTimeMillis()))
 			.when().get("/{id}")
 			.then()
 				.assertThat().statusCode(is(Response.Status.NOT_FOUND.getStatusCode()))
 				.assertThat().body(notNullValue());
 		
+		given(requestSpecification)
+			.pathParam("id", String.valueOf(System.currentTimeMillis()))
+			.body(loadBody())
+			.when().log().all(printLog).put("/{id}")
+			.then().log().all(printLog)
+				.assertThat().statusCode(is(Response.Status.NOT_FOUND.getStatusCode()));
+		
+		given(requestSpecification)
+		.pathParam("id", String.valueOf(System.currentTimeMillis()))
+		.when().log().all(printLog).delete("/{id}")
+		.then().log().all(printLog)
+			.assertThat().statusCode(is(Response.Status.NOT_FOUND.getStatusCode()));
+		
 	}
 	
 	@Test
-	@Ignore
 	@RunAsClient
 	@InSequence(7)
 	public void conflict() throws URISyntaxException {
 		
 		String body = loadBody();
 		
-		// Create Client
-		
-		given(requestSpecification)
-				.contentType(ContentType.JSON)
+		// Create Client		
+		String location = given(requestSpecification)
 				.body(body)
 				.when().post()
 				.then()
 					.assertThat()
-					.header("Location", notNullValue()).statusCode(is(Response.Status.CREATED.getStatusCode()));
+					.header(LOCATION_HEADER, notNullValue()).statusCode(is(Response.Status.CREATED.getStatusCode()))
+					.extract().header(LOCATION_HEADER);
 		
-		// Create Duplicate Client
-		
+		// Create Duplicate Client		
 		given(requestSpecification)
-			.contentType(ContentType.JSON)
 			.body(body)
 			.when().post()
 			.then()
 				.assertThat().statusCode(is(Response.Status.CONFLICT.getStatusCode()));
+		
+		// Update Client
+		given(requestSpecification)
+			.pathParam("id", extractIdentity(location))
+			.body(body.replaceFirst("name:"+NAME, "name:update"))
+			.when().log().all(printLog).put("/{id}")
+			.then().log().all(printLog)
+			.assertThat().statusCode(is(Response.Status.CONFLICT.getStatusCode()));
 		
 		
 	}
@@ -231,7 +242,7 @@ public class ClientResourceIT {
 		Long now = System.currentTimeMillis();
         
         Client client = new Client();
-        client.setEmail(EMAIL);
+        client.setEmail(now + EMAIL);
         client.setName(NAME + " " + now);
 		
 		return new GsonBuilder().create().toJson(client);

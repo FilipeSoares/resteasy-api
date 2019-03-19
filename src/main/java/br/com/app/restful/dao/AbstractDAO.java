@@ -3,14 +3,10 @@ package br.com.app.restful.dao;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
 import javax.persistence.TypedQuery;
@@ -126,13 +122,13 @@ public abstract class AbstractDAO<T extends ModelEntity> implements DAO<T> {
 	}
 	
 	@Transactional
-	public void update(T entity) {
-		em.merge(entity);
+	public T update(T entity) {
+		return em.merge(entity);
 	}
 
 	@Transactional
-	public void remove(Long id) {
-		em.remove(em.merge(find(id)));
+	public void remove(T entity) {
+		em.remove(em.merge(entity));
 	}
 
 }

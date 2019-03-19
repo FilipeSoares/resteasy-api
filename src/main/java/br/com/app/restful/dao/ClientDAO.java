@@ -23,6 +23,11 @@ public class ClientDAO extends AbstractDAO<Client> implements DAO<Client> {
 			throw new NotFoundException("Client not found!");
 		}
     }
+    
+    public List<Client> findByEmail(final String email) throws NotFoundException {
+    	this.restrictions.add(builder.equal(root.get("email"), email));
+    	return listWithCriteria(this.fields, this.restrictions);
+    }
 
     @Override
 	public List<Client> list() {

@@ -18,8 +18,8 @@ public interface DAO<T extends ModelEntity> {
 	
 	Long create(T entity);
 	
-	void update(T entity);
+	T update(T entity);
 	
-	void remove(Long id);
+	void remove(T entity);
 	
 }

@@ -1,6 +1,7 @@
 package br.com.app.restful.resources;
 
 import java.net.URI;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -14,6 +15,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
 import br.com.app.restful.dao.ClientDAO;
@@ -40,23 +42,35 @@ public class ClientResource {
 	
 	@POST
 	public Response create(Client client) {
-		URI location = UriBuilder.fromResource(ClientResource.class).path(dao.create(client).toString()).build();
-		return Response.created(location).build();
+		
+		if ( dao.findByEmail(client.getEmail()).isEmpty() ){
+			URI location = UriBuilder.fromResource(ClientResource.class).path(dao.create(client).toString()).build();
+			return Response.created(location).build();
+		} else {
+			return Response.status(Status.CONFLICT).build();
+		}
+		
 	}
 	
 	@PUT
 	@Path("/{id}")
 	public Response update(@PathParam("id") Long id, Client client) {
-		URI location = UriBuilder.fromResource(ClientResource.class).path(id.toString()).build();
-		client.setId(id);
-		dao.update(client);
-		return Response.ok().header("Location", location).build();
+		
+		dao.find(id);
+		if ( dao.findByEmail(client.getEmail()).stream().filter(c -> c.getId()!=id).collect(Collectors.toList()).isEmpty() ){
+			URI location = UriBuilder.fromResource(ClientResource.class).path(id.toString()).build();
+			client.setId(id);
+			return Response.ok(dao.update(client)).header("Location", location).build();
+		} else {
+			return Response.status(Status.CONFLICT).build();
+		}
+		
 	}
 	
 	@DELETE
 	@Path("/{id}")
 	public Response remover(@PathParam("id") Long id) {
-		dao.remove(id);
+		dao.remove(dao.find(id));
 		return Response.noContent().build();
 	}
 	
