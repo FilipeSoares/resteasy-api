@@ -20,7 +20,7 @@ public class ClientDAO extends AbstractDAO<Client> implements DAO<Client> {
     	try {
     		return findWithCriteria(id, fields);
     	} catch (NoResultException e) {
-			throw new NotFoundException("Client not found!");
+			throw new NotFoundException("Client not found");
 		}
     }
     
