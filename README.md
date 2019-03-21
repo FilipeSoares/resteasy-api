@@ -60,3 +60,11 @@ public class ClientResourceIT {
 ## ApiDocs
 
 To document the api [Swagger](https://swagger.io/) was used
+
+### Get file of Swagger
+
+http://localhost:8080/restful-api/v1/swagger.json
+
+### Swagger UI
+
+http://localhost:8080/restful-api/v1/api-docs/index.html
