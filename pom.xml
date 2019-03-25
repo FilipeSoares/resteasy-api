@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.app</groupId>
 	<artifactId>restful-api</artifactId>
-	<version>0.0.4-SNAPSHOT</version>
+	<version>0.0.5-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>${artifactId}</name>
 	<description>Restful API Sample</description>
@@ -84,15 +84,7 @@
 		    <artifactId>jackson-databind</artifactId>
 		    <version>2.9.8</version>
 		    <scope>provided</scope>
-		</dependency>
-		
-		<!-- Swagger 
-		<dependency>
-		  <groupId>io.swagger</groupId>
-		  <artifactId>swagger-jaxrs</artifactId>
-		  <version>1.5.0</version>
-		</dependency>
-		-->
+		</dependency>		
 		<dependency>
 	      <groupId>io.swagger.core.v3</groupId>
 	      <artifactId>swagger-jaxrs2</artifactId>
