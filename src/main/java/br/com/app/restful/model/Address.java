@@ -38,13 +38,19 @@ public class Address implements Serializable, ModelEntity {
 		super();
 	}
 
-	public Address(Long id, String street, String city, State state, Long zip) {
+	public Address(String street, String city, State state, Long zip, String description) {
 		super();
-		this.id = id;
 		this.street = street;
 		this.city = city;
 		this.state = state;
 		this.zip = zip;
+		this.description = description;
+	}
+	
+	public Address(String street, String description) {
+		super();
+		this.street = street;
+		this.description = description;
 	}
 
 	@Override

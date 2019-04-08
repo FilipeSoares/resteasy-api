@@ -23,8 +23,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import br.com.app.restful.dao.ClientDAO;
-import br.com.app.restful.model.Client;
+import br.com.app.restful.model.Address;
+import br.com.app.restful.model.State;
 
 @RunWith(ArquillianChameleon.class)
 @ChameleonTarget(value = "wildfly:11.0.0.Final:managed", customProperties = {
@@ -54,12 +54,12 @@ public class AddressDAOIT {
 	private static final String ATTR_CITY = "Test City";
 	private static final Long ATTR_ZIP = 321564L;
 	
-    /*
+    
 	@Transactional
 	@Test
 	@InSequence(1)
 	public void save() {
-		Assert.assertNotNull(dao.create(new Client(ATTR_EMAIL, ATTR_NAME)));
+		Assert.assertNotNull(dao.create(new Address(ATTR_STREET, ATTR_CITY, State.FLORIDA, ATTR_ZIP, ATTR_DESCRIPTION)));
 	}
 
 	@Test
@@ -72,14 +72,11 @@ public class AddressDAOIT {
 	@InSequence(3)
 	public void listWithCriteria() {
 
-		Long now = System.currentTimeMillis();
+		Address address = new Address(ATTR_STREET, ATTR_CITY, State.FLORIDA, ATTR_ZIP, ATTR_DESCRIPTION);
 		
-		Client client = new Client();
-		client.setEmail(ATTR_EMAIL);
-		client.setName(ATTR_NAME + now);		
-		dao.create(client);
+		dao.create(address);
 
-		final List<String> fields = Arrays.asList("name", "email");
+		final List<String> fields = Arrays.asList("description", "street");
 		final List<Predicate> restrictions = new ArrayList<>();
 
 		Assert.assertNotNull(dao.listWithCriteria(fields, restrictions));
@@ -91,16 +88,11 @@ public class AddressDAOIT {
 	@InSequence(4)
 	public void find() {
 		
-		Long now = System.currentTimeMillis();
+		Address address = new Address(ATTR_STREET, ATTR_CITY, State.FLORIDA, ATTR_ZIP, ATTR_DESCRIPTION);
 		
-		Client client = new Client();
-		client.setEmail(ATTR_EMAIL);
-		client.setName(ATTR_NAME + now);
-		
-		Long id = dao.create(client);
+		Long id = dao.create(address);
 		
 		Assert.assertNotNull(dao.find(id));
 	}
-*/
 	
 }
