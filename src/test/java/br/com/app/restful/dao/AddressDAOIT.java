@@ -20,10 +20,12 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.ScopeType;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import br.com.app.restful.model.Address;
+import br.com.app.restful.model.Client;
 import br.com.app.restful.model.State;
 
 @RunWith(ArquillianChameleon.class)
@@ -48,18 +50,28 @@ public class AddressDAOIT {
 
 	@Inject
 	AddressDAO dao;
+	
+	@Inject
+	ClientDAO clientDAO;
 
 	private static final String ATTR_STREET = "Robert Trent Jr.";
 	private static final String ATTR_DESCRIPTION = "Test Address";
 	private static final String ATTR_CITY = "Test City";
 	private static final Long ATTR_ZIP = 321564L;
 	
-    
+	private Long clientId;
+	
+	@Before
 	@Transactional
+	public void init() {
+		this.clientId =  clientDAO.create( new Client("test-client@email.com", "Test Client") );
+	}
+	
+    @Transactional
 	@Test
 	@InSequence(1)
 	public void save() {
-		Assert.assertNotNull(dao.create(new Address(ATTR_STREET, ATTR_CITY, State.FLORIDA, ATTR_ZIP, ATTR_DESCRIPTION)));
+		Assert.assertNotNull(dao.create(new Address(ATTR_STREET, ATTR_CITY, State.FLORIDA, ATTR_ZIP, ATTR_DESCRIPTION, clientDAO.find(clientId))));
 	}
 
 	@Test
@@ -67,16 +79,17 @@ public class AddressDAOIT {
 	public void list() {
 		Assert.assertNotNull(dao.list());
 	}
-
+	
+	@Transactional
 	@Test
 	@InSequence(3)
 	public void listWithCriteria() {
 
-		Address address = new Address(ATTR_STREET, ATTR_CITY, State.FLORIDA, ATTR_ZIP, ATTR_DESCRIPTION);
+		Address address = new Address(ATTR_STREET, ATTR_CITY, State.FLORIDA, ATTR_ZIP, ATTR_DESCRIPTION, clientDAO.find(clientId));
 		
 		dao.create(address);
 
-		final List<String> fields = Arrays.asList("description", "street");
+		final List<String> fields = Arrays.asList("description", "street", "client");
 		final List<Predicate> restrictions = new ArrayList<>();
 
 		Assert.assertNotNull(dao.listWithCriteria(fields, restrictions));
@@ -88,11 +101,13 @@ public class AddressDAOIT {
 	@InSequence(4)
 	public void find() {
 		
-		Address address = new Address(ATTR_STREET, ATTR_CITY, State.FLORIDA, ATTR_ZIP, ATTR_DESCRIPTION);
+		Address address = new Address(ATTR_STREET, ATTR_CITY, State.FLORIDA, ATTR_ZIP, ATTR_DESCRIPTION, clientDAO.find(clientId));
 		
 		Long id = dao.create(address);
 		
 		Assert.assertNotNull(dao.find(id));
+		Assert.assertNotNull(dao.find(id).getClient());
+		
 	}
 	
 }

@@ -12,26 +12,26 @@ import br.com.app.restful.model.Address;
 
 public class AddressDAO extends AbstractDAO<Address> implements DAO<Address> {
 
-    final List<String> fields = Arrays.asList("description", "street");
-    final List<Predicate> restrictions = new ArrayList<>();
+    public static final List<String> FIELDS = Arrays.asList("description", "street", "client");
+    public static final List<Predicate> RESTRICTIONS = new ArrayList<>();
     
     @Override
     public Address find(final Long id) throws NotFoundException {
     	try {
-    		return findWithCriteria(id, fields);
+    		return findWithCriteria(id, FIELDS);
     	} catch (NoResultException e) {
 			throw new NotFoundException("Address not found");
 		}
     }
     
     public List<Address> findByStreet(final String street) throws NotFoundException {
-    	this.restrictions.add(builder.like(root.get("street"), "%" + street + "%"));
-    	return listWithCriteria(this.fields, this.restrictions);
+    	RESTRICTIONS.add(builder.like(root.get("street"), "%" + street + "%"));
+    	return listWithCriteria(FIELDS, RESTRICTIONS);
     }
 
     @Override
-	public List<Address> list() {
-		return listWithCriteria(fields, restrictions);
+	public List<Address> list() {    	
+    	return listWithCriteria(FIELDS, RESTRICTIONS);
 	}
 
 }

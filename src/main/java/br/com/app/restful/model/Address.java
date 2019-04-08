@@ -2,11 +2,15 @@ package br.com.app.restful.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -33,24 +37,30 @@ public class Address implements Serializable, ModelEntity {
 	
 	@Column
 	private Long zip;
+	
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "client")
+	private Client client;
 
 	public Address() {
 		super();
 	}
 
-	public Address(String street, String city, State state, Long zip, String description) {
+	public Address(String street, String city, State state, Long zip, String description, Client client) {
 		super();
 		this.street = street;
 		this.city = city;
 		this.state = state;
 		this.zip = zip;
 		this.description = description;
+		this.client = client;
 	}
 	
-	public Address(String street, String description) {
+	public Address(String street, String description, Client client) {
 		super();
 		this.street = street;
 		this.description = description;
+		this.client = client;
 	}
 
 	@Override
@@ -101,6 +111,14 @@ public class Address implements Serializable, ModelEntity {
 	public void setZip(Long zip) {
 		this.zip = zip;
 	}
+	
+	public Client getClient() {
+		return client;
+	}
+
+	public void setClient(Client client) {
+		this.client = client;
+	}
 
 	@Override
 	public int hashCode() {
@@ -125,6 +143,11 @@ public class Address implements Serializable, ModelEntity {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "{ \"description\": " + description + ", \"street\": " + street + ", \"client\": { \"name\": " + client.getName() + "} }";
 	}
 
 }

@@ -61,18 +61,14 @@ public abstract class AbstractDAO<T extends ModelEntity> implements DAO<T> {
 	
 	public List<T> listWithCriteria(final List<?> fields, final List<Predicate> restrictions) {
 		
-		if ( !fields.isEmpty() ) {
-			
-			List<Expression<?>> fieldsList = new ArrayList<Expression<?>>();
-			
-			fields.forEach(f -> fieldsList.add(root.get(f.toString())));
-			
-			final List<Selection<?>> selectionList = new ArrayList<>();
-			selectionList.addAll(fieldsList);
-			
-			query.multiselect(selectionList);
+		Selection<?>[] selections = new Selection<?>[fields.size()];
+		
+		for (int i = 0; i < fields.size(); i++) {
+			selections[i] = root.get(fields.get(i).toString());
 			
 		}
+		
+		query.select(builder.construct(clazz, selections));
 		
 		if ( !restrictions.isEmpty() ) {
 			query.where(restrictions.toArray(new Predicate[restrictions.size()]));
