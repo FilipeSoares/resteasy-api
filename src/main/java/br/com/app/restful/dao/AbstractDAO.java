@@ -13,6 +13,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
@@ -21,8 +22,6 @@ import javax.transaction.Transactional;
 import br.com.app.restful.model.ModelEntity;
 
 public abstract class AbstractDAO<T extends ModelEntity> implements DAO<T> {
-	
-
 
 	@PersistenceContext(type = PersistenceContextType.EXTENDED)
 	EntityManager em;
@@ -32,7 +31,6 @@ public abstract class AbstractDAO<T extends ModelEntity> implements DAO<T> {
 	protected CriteriaQuery<T> query;
 	protected Root<T> root; 
 	
-	@SuppressWarnings("unchecked")
 	public AbstractDAO() {
 		Type type = getClass().getGenericSuperclass();
 
@@ -54,7 +52,6 @@ public abstract class AbstractDAO<T extends ModelEntity> implements DAO<T> {
         root = (Root<T>) query.from(clazz).alias(clazz.getSimpleName().toLowerCase());
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<T> list() {
 		return em.createQuery("select o from " + clazz.getSimpleName() + " o").getResultList();
 	}
@@ -65,8 +62,28 @@ public abstract class AbstractDAO<T extends ModelEntity> implements DAO<T> {
 		
 		for (int i = 0; i < fields.size(); i++) {
 			selections[i] = root.get(fields.get(i).toString());
-			
 		}
+		
+		query.select(builder.construct(clazz, selections));
+		
+		if ( !restrictions.isEmpty() ) {
+			query.where(restrictions.toArray(new Predicate[restrictions.size()]));
+		}
+        
+        TypedQuery<T> typedQuery = em.createQuery(query);
+		
+		return typedQuery.getResultList();
+	}
+	
+	public List<T> listWithCriteria(final List<?> fields, final List<Predicate> restrictions, final List<String> joins) {
+		
+		Selection<?>[] selections = new Selection<?>[fields.size()];
+		
+		for (int i = 0; i < fields.size(); i++) {
+			selections[i] = root.get(fields.get(i).toString());
+		}
+		
+		joins.forEach(join -> root.join("client", JoinType.LEFT) );
 		
 		query.select(builder.construct(clazz, selections));
 		
