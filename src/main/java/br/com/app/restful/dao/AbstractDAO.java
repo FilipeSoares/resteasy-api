@@ -77,13 +77,14 @@ public abstract class AbstractDAO<T extends ModelEntity> implements DAO<T> {
 	
 	public List<T> listWithCriteria(final List<?> fields, final List<Predicate> restrictions, final List<String> joins) {
 		
+		
+		joins.forEach( join -> root.join(join, JoinType.LEFT) );
+		
 		Selection<?>[] selections = new Selection<?>[fields.size()];
 		
 		for (int i = 0; i < fields.size(); i++) {
 			selections[i] = root.get(fields.get(i).toString());
 		}
-		
-		joins.forEach(join -> root.join("client", JoinType.LEFT) );
 		
 		query.select(builder.construct(clazz, selections));
 		

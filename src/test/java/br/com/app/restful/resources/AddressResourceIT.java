@@ -25,7 +25,6 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.jboss.shrinkwrap.resolver.api.maven.ScopeType;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -57,7 +56,7 @@ public class AddressResourceIT {
 	private static final Long ATTR_ZIP = 321564L;
 	private static final String LOCATION_HEADER = "Location";
 	
-	private static final boolean printLog = false;
+	private static final boolean printLog = true;
 	
 	@Deployment
 	public static WebArchive deploy() {
@@ -144,7 +143,6 @@ public class AddressResourceIT {
 	@Test
 	@RunAsClient
 	@InSequence(4)
-	@Ignore
 	public void get() {
 		
 		String location = given(requestSpecification)
@@ -167,21 +165,20 @@ public class AddressResourceIT {
 	@Test
 	@RunAsClient
 	@InSequence(5)
-	@Ignore
 	public void remove() {
 		
 		String location = given(requestSpecification)
 				.body(loadBody())
-				.when().post()
-				.then()
+				.when().log().all(printLog).post()
+				.then().log().all(printLog)
 					.assertThat()
 					.header(LOCATION_HEADER, notNullValue()).statusCode(is(Response.Status.CREATED.getStatusCode()))
 				.extract().header(LOCATION_HEADER);
 		
 		given(requestSpecification)
 			.pathParam("id", extractIdentity(location))
-			.when().delete("/{id}")
-			.then()
+			.when().log().all(printLog).delete("/{id}")
+			.then().log().all(printLog)
 				.assertThat().statusCode(is(Response.Status.NO_CONTENT.getStatusCode()));
 		
 	}
@@ -201,21 +198,21 @@ public class AddressResourceIT {
 		given(requestSpecification)
 			.pathParam("id", String.valueOf(System.currentTimeMillis()))
 			.body(loadBody())
-			.when().log().all(printLog).put("/{id}")
-			.then().log().all(printLog)
+			.when().put("/{id}")
+			.then()
 				.assertThat().statusCode(is(Response.Status.NOT_FOUND.getStatusCode()));
 		
 		given(requestSpecification)
 		.pathParam("id", String.valueOf(System.currentTimeMillis()))
-		.when().log().all(printLog).delete("/{id}")
-		.then().log().all(printLog)
+		.when().delete("/{id}")
+		.then()
 			.assertThat().statusCode(is(Response.Status.NOT_FOUND.getStatusCode()));
 		
 	}
 	
 	private static String loadBody() {
 		
-		Client client = new Client("client.adrress@email.com", "Client Test Address");
+		Client client = new Client("client.adrress@email.com", "Client Test Address " + System.currentTimeMillis());
         
         Address address = new Address(ATTR_STREET, ATTR_CITY, State.FLORIDA, ATTR_ZIP, ATTR_DESCRIPTION, client);
 		

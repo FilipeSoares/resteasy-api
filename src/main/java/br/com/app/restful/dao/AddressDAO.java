@@ -14,7 +14,6 @@ public class AddressDAO extends AbstractDAO<Address> implements DAO<Address> {
 
     public static final List<String> FIELDS = Arrays.asList("description", "street", "client");
     public static final List<Predicate> RESTRICTIONS = new ArrayList<>();
-    public static final List<String> JOINS = Arrays.asList("client");
     
     @Override
     public Address find(final Long id) throws NotFoundException {
@@ -32,7 +31,7 @@ public class AddressDAO extends AbstractDAO<Address> implements DAO<Address> {
 
     @Override
 	public List<Address> list() {    	
-    	return listWithCriteria(FIELDS, RESTRICTIONS, JOINS);
+    	return listWithCriteria(FIELDS, RESTRICTIONS);
 	}
 
 }
