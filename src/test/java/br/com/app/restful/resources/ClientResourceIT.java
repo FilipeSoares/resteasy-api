@@ -133,10 +133,89 @@ public class ClientResourceIT {
 				.assertThat().statusCode(anyOf(is(Response.Status.OK.getStatusCode()), is(Response.Status.PARTIAL_CONTENT.getStatusCode())));
 		
 	}
-	
+
 	@Test
 	@RunAsClient
 	@InSequence(4)
+	public void listByName() {
+
+		final String body = loadBody();
+		
+		given(requestSpecification)
+				.body(body)
+				.when().post()
+				.then()
+					.assertThat()
+					.header(LOCATION_HEADER, notNullValue())
+					.statusCode(is(Response.Status.CREATED.getStatusCode()));
+
+		Client client = new GsonBuilder().create().fromJson(body, Client.class);
+		
+		given(requestSpecification)
+			.queryParam("name", client.getName())
+			.when()
+				.get()
+			.then()
+				.assertThat().statusCode(anyOf(is(Response.Status.OK.getStatusCode()), is(Response.Status.PARTIAL_CONTENT.getStatusCode())));
+		
+	}
+
+	@Test
+	@RunAsClient
+	@InSequence(5)
+	public void listByEmail() {
+
+		final String body = loadBody();
+		
+		given(requestSpecification)
+				.body(body)
+				.when().post()
+				.then()
+					.assertThat()
+					.header(LOCATION_HEADER, notNullValue())
+					.statusCode(is(Response.Status.CREATED.getStatusCode()));
+
+		Client client = new GsonBuilder().create().fromJson(body, Client.class);
+		
+		given(requestSpecification)
+			.queryParam("email", client.getEmail())
+			.when()
+				.get()
+			.then()
+				.assertThat().statusCode(anyOf(is(Response.Status.OK.getStatusCode()), is(Response.Status.PARTIAL_CONTENT.getStatusCode())));
+		
+	}
+
+	@Test
+	@RunAsClient
+	@InSequence(6)
+	public void listByNameAndEmail() {
+
+		final String body = loadBody();
+		
+		given(requestSpecification)
+				.body(body)
+				.when().post()
+				.then()
+					.assertThat()
+					.header(LOCATION_HEADER, notNullValue())
+					.statusCode(is(Response.Status.CREATED.getStatusCode()));
+
+		Client client = new GsonBuilder().create().fromJson(body, Client.class);
+		
+		given(requestSpecification)
+			.queryParam("name", client.getName())
+			.queryParam("email", client.getEmail())
+			.when()
+				.get()
+			.then()
+				.assertThat().statusCode(anyOf(is(Response.Status.OK.getStatusCode()), is(Response.Status.PARTIAL_CONTENT.getStatusCode())));
+		
+	}
+	
+	@Test
+	@RunAsClient
+	@InSequence(7)
 	public void get() {
 		
 		String location = given(requestSpecification)
@@ -192,14 +271,14 @@ public class ClientResourceIT {
 		given(requestSpecification)
 			.pathParam("id", String.valueOf(System.currentTimeMillis()))
 			.body(loadBody())
-			.when().log().all(printLog).put("/{id}")
-			.then().log().all(printLog)
+			.when().put("/{id}")
+			.then()
 				.assertThat().statusCode(is(Response.Status.NOT_FOUND.getStatusCode()));
 		
 		given(requestSpecification)
 		.pathParam("id", String.valueOf(System.currentTimeMillis()))
-		.when().log().all(printLog).delete("/{id}")
-		.then().log().all(printLog)
+		.when().delete("/{id}")
+		.then()
 			.assertThat().statusCode(is(Response.Status.NOT_FOUND.getStatusCode()));
 		
 	}

@@ -19,6 +19,8 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
+
 import br.com.app.restful.model.ModelEntity;
 
 public abstract class AbstractDAO<T extends ModelEntity> implements DAO<T> {
@@ -29,8 +31,10 @@ public abstract class AbstractDAO<T extends ModelEntity> implements DAO<T> {
 	private final Class<T> clazz;
 	protected CriteriaBuilder builder;
 	protected CriteriaQuery<T> query;
-	protected Root<T> root; 
-	
+	protected Root<T> root;
+
+	final List<Predicate> restrictions = new ArrayList<>();
+
 	public AbstractDAO() {
 		Type type = getClass().getGenericSuperclass();
 
@@ -44,87 +48,87 @@ public abstract class AbstractDAO<T extends ModelEntity> implements DAO<T> {
 
 		this.clazz = (Class<T>) ((ParameterizedType) type).getActualTypeArguments()[0];
 	}
-	
+
 	@PostConstruct
 	private void init() {
 		builder = em.getCriteriaBuilder();
-	    query = builder.createQuery(clazz);
-        root = (Root<T>) query.from(clazz).alias(clazz.getSimpleName().toLowerCase());
+		query = builder.createQuery(clazz);
+		root = (Root<T>) query.from(clazz).alias(clazz.getSimpleName().toLowerCase());
 	}
 
 	public List<T> list() {
 		return em.createQuery("select o from " + clazz.getSimpleName() + " o").getResultList();
 	}
-	
+
 	public List<T> listWithCriteria(final List<?> fields, final List<Predicate> restrictions) {
-		
+
 		Selection<?>[] selections = new Selection<?>[fields.size()];
-		
+
 		for (int i = 0; i < fields.size(); i++) {
 			selections[i] = root.get(fields.get(i).toString());
 		}
-		
+
 		query.select(builder.construct(clazz, selections));
-		
-		if ( !restrictions.isEmpty() ) {
+
+		if (!restrictions.isEmpty()) {
 			query.where(restrictions.toArray(new Predicate[restrictions.size()]));
 		}
-        
-        TypedQuery<T> typedQuery = em.createQuery(query);
-		
+
+		TypedQuery<T> typedQuery = em.createQuery(query);
+
 		return typedQuery.getResultList();
 	}
-	
-	public List<T> listWithCriteria(final List<?> fields, final List<Predicate> restrictions, final List<String> joins) {
-		
-		
-		joins.forEach( join -> root.join(join, JoinType.LEFT) );
-		
+
+	public List<T> listWithCriteria(final List<?> fields, final List<Predicate> restrictions,
+			final List<String> joins) {
+
+		joins.forEach(join -> root.join(join, JoinType.LEFT));
+
 		Selection<?>[] selections = new Selection<?>[fields.size()];
-		
+
 		for (int i = 0; i < fields.size(); i++) {
 			selections[i] = root.get(fields.get(i).toString());
 		}
-		
+
 		query.select(builder.construct(clazz, selections));
-		
-		if ( !restrictions.isEmpty() ) {
+
+		if (!restrictions.isEmpty()) {
 			query.where(restrictions.toArray(new Predicate[restrictions.size()]));
 		}
-        
-        TypedQuery<T> typedQuery = em.createQuery(query);
-		
+
+		TypedQuery<T> typedQuery = em.createQuery(query);
+
 		return typedQuery.getResultList();
 	}
 
 	public T find(Long id) {
 		return em.find(clazz, id);
 	}
-	
+
 	public T findWithCriteria(final Long id, final List<?> fields) {
-		
+
 		CriteriaBuilder builder = em.getCriteriaBuilder();
 		builder = em.getCriteriaBuilder();
-	    CriteriaQuery<T> query = builder.createQuery(clazz);
-        Root<T> root = (Root<T>) query.from(clazz).alias(clazz.getSimpleName().toLowerCase());
-        
-        if ( !fields.isEmpty() ) {
-			
+		CriteriaQuery<T> query = builder.createQuery(clazz);
+		Root<T> root = (Root<T>) query.from(clazz).alias(clazz.getSimpleName().toLowerCase());
+
+		if (!fields.isEmpty()) {
+
 			List<Expression<?>> fieldsList = new ArrayList<Expression<?>>();
-			
+
 			fields.forEach(f -> fieldsList.add(root.get(f.toString())));
-			
+
 			final List<Selection<?>> selectionList = new ArrayList<>();
 			selectionList.addAll(fieldsList);
-			
+
 			query.multiselect(selectionList);
-			
+
 		}
-        
-        query.where(builder.and(builder.equal(root.get("id"), id)));
-		
-        TypedQuery<T> typedQuery = em.createQuery(query);
-		
+
+		query.where(builder.and(builder.equal(root.get("id"), id)));
+
+		TypedQuery<T> typedQuery = em.createQuery(query);
+
 		return typedQuery.getSingleResult();
 	}
 
@@ -134,7 +138,7 @@ public abstract class AbstractDAO<T extends ModelEntity> implements DAO<T> {
 		em.flush();
 		return entity.getId();
 	}
-	
+
 	@Transactional
 	public T update(T entity) {
 		return em.merge(entity);
@@ -143,6 +147,13 @@ public abstract class AbstractDAO<T extends ModelEntity> implements DAO<T> {
 	@Transactional
 	public void remove(T entity) {
 		em.remove(em.merge(entity));
+	}
+
+	protected void addLikeFilter(final String field, final String value) {
+
+		if (StringUtils.isNotBlank(field) && StringUtils.isNotBlank(value)) {
+			this.restrictions.add(builder.like(root.get(field), "%" + value + "%"));
+		}
 	}
 
 }

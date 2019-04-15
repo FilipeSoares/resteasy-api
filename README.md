@@ -1,28 +1,43 @@
 # Restful-api
 
-A sample restful api implemented with [Resteasy](https://resteasy.github.io/) and have example of usage of [Junit4](https://junit.org/junit4/), [Arquillian](http://arquillian.org/) and [RestAssured](http://rest-assured.io/)
+A sample RESTful api implemented with [Resteasy](https://resteasy.github.io/) and usage example of [Junit4](https://junit.org/junit4/), [Arquillian](http://arquillian.org/), [RestAssured](http://rest-assured.io/), [Swagger](https://github.com/swagger-api)
+
+# Table of Contents
+
+- [Application Server](#aplication-server)
+- [Maven](#maven)
+    - [Build](#build)
+    - [Integration Tests](#integration-tests)
+        - [Explain](#explainning-a-little-bit-more)
+- [ApiDocs](#apidocs)
+    - [Swagger JSON](#swagger-json)
+    - [Swagger UI](#swagger-ui)
 
 ## Aplication Server
 
-This sample use a Wildfly 11 such as ServletContainer and JEE full implementation
+This sample use Wildfly 11 such as ServletContainer and JEE full implementation
 
-## Maven Build
+## Maven
+
+### Build
+
+This project is built-in with maven throught the goal
 
 ```console
-mvn install
+mvn package
 ```
 
-## Integration Tests
+### Integration Tests
 
-The integration tests use [Arquillian Chameleon](https://github.com/arquillian/arquillian-container-chameleon) to provide a container instance in tests scope and [RestAssured](http://rest-assured.io/) to verify the Rest API
+The integration tests uses [Arquillian Chameleon](https://github.com/arquillian/arquillian-container-chameleon) to provide a container instance in tests scope and [RestAssured](http://rest-assured.io/) to verify the Rest API
 
-To execute tests run the cli
+To execute tests run the goal
 
 ```console
 mvn verify
 ```
 
-### Explainning a little bit more
+#### Explainning a little bit more
 
 When integration-tests goal starts, the [Arquillian Chameleon](https://github.com/arquillian/arquillian-container-chameleon) shall download (if not exists) a servlet container specified in ```@ChameleonTarget``` and start them, then a deploy of the application specified in ```@Deployment``` will be done, after that the junit [Junit4](https://junit.org/junit4/) will be executed. Ex...
 
@@ -59,12 +74,12 @@ public class ClientResourceIT {
 
 ## ApiDocs
 
-To document the api [Swagger](https://swagger.io/) was used
+To document the api [Swagger](https://github.com/swagger-api) was used, a powerful api that follow the [OpenAPI](https://github.com/OAI/OpenAPI-Specification) specification. After deploy the project you can see the docs in:
 
-### Get file of Swagger
+### Swagger JSON
 
-http://localhost:8080/restful-api/v1/swagger.json
+http://localhost:8080/restful-api/v1/openapi/swagger.json
 
 ### Swagger UI
 
-http://localhost:8080/restful-api/v1/api-docs/index.html
+http://localhost:8080/restful-api/v1/openapi/apidocs/index.html
