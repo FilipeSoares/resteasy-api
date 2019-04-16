@@ -40,7 +40,7 @@ public class AddressResource {
 			   responses = @ApiResponse(responseCode = "200", content = @Content( schema = @Schema(implementation=Address.class) ), description = "List of all addresses" ))
 	public Response list(@Parameter(description="Street of Address", example="street=Killington", in = ParameterIn.QUERY, required = false) @QueryParam("street") String street) {
 		
-		return Response.ok(dao.list()).build();
+		return Response.ok(dao.list(street)).build();
 		
 	}
 	

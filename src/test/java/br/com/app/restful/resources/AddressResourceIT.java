@@ -139,10 +139,35 @@ public class AddressResourceIT {
 				.assertThat().statusCode(anyOf(is(Response.Status.OK.getStatusCode()), is(Response.Status.PARTIAL_CONTENT.getStatusCode())));
 		
 	}
-	
+
 	@Test
 	@RunAsClient
 	@InSequence(4)
+	public void listByStreet() {
+
+		final String body = loadBody();
+
+		given(requestSpecification)
+				.body(body)
+				.when().post()
+				.then()
+					.assertThat()
+					.header(LOCATION_HEADER, notNullValue()).statusCode(is(Response.Status.CREATED.getStatusCode()));
+		
+		Address address = new GsonBuilder().create().fromJson(body, Address.class);
+		
+		given(requestSpecification)
+			.queryParam("street", address.getStreet())
+			.when()
+				.get()
+			.then()
+				.assertThat().statusCode(anyOf(is(Response.Status.OK.getStatusCode()), is(Response.Status.PARTIAL_CONTENT.getStatusCode())));
+		
+	}
+	
+	@Test
+	@RunAsClient
+	@InSequence(5)
 	public void get() {
 		
 		String location = given(requestSpecification)
@@ -164,7 +189,7 @@ public class AddressResourceIT {
 	
 	@Test
 	@RunAsClient
-	@InSequence(5)
+	@InSequence(6)
 	public void remove() {
 		
 		String location = given(requestSpecification)
@@ -185,7 +210,7 @@ public class AddressResourceIT {
 	
 	@Test
 	@RunAsClient
-	@InSequence(6)
+	@InSequence(7)
 	public void notFound() {
 		
 		given(requestSpecification)

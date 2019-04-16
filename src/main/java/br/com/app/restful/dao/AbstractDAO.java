@@ -33,7 +33,7 @@ public abstract class AbstractDAO<T extends ModelEntity> implements DAO<T> {
 	protected CriteriaQuery<T> query;
 	protected Root<T> root;
 
-	final List<Predicate> restrictions = new ArrayList<>();
+	protected final List<Predicate> restrictions = new ArrayList<>();
 
 	public AbstractDAO() {
 		Type type = getClass().getGenericSuperclass();
