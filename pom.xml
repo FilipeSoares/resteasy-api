@@ -4,19 +4,16 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.app</groupId>
 	<artifactId>restful-api</artifactId>
-	<version>0.0.6-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>war</packaging>
 	<name>${artifactId}</name>
-	<description>Restful API Sample</description>
+	<description>RESTful API Sample</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<resteasy.version>3.1.1.Final</resteasy.version>
 		<version.jackson>2.8.7</version.jackson>
 		<arquillian.chameleon.version>1.0.0.CR2</arquillian.chameleon.version>
-  		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
-  		<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
-  		<sonar.language>java</sonar.language>
 	</properties>
 	
 	<dependencyManagement>
@@ -109,13 +106,6 @@
 			<version>3.1.0</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- Bean Tests -->
-		<dependency>
-		   <groupId>com.google.code.bean-matchers</groupId>
-		   <artifactId>bean-matchers</artifactId>
-		   <version>0.11</version>
-		   <scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -127,12 +117,6 @@
 		    <artifactId>gson</artifactId>
 		    <version>2.8.0</version>
 		    <scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<version>2.19.0</version>
-			<scope>test</scope>
 		</dependency>
 		<!-- Arquillian -->
 		<dependency>
