@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.com.app</groupId>
 	<artifactId>restful-api</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<packaging>war</packaging>
 	<name>${artifactId}</name>
 	<description>RESTful API Sample</description>

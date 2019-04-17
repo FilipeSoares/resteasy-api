@@ -78,7 +78,7 @@ To document the api [Swagger](https://github.com/swagger-api) was used, a powerf
 
 ### Swagger JSON
 
-http://localhost:8080/restful-api/v1/openapi/swagger.json
+http://localhost:8080/restful-api/v1/openapi/openapi.json
 
 ### Swagger UI
 
